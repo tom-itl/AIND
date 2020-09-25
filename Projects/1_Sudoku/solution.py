@@ -82,9 +82,28 @@ def naked_twins(values):
     # TODO: Implement this function!
     nt_values = copy.deepcopy(values)
 
-    
+    # Find potential twins
+    potential_twins = []
+    for box in nt_values.keys():
+        if len(nt_values[box]) == 2:
+            potential_twins.append(box)
 
+    # Create sets of twins to check for equality
+    twin_sets = [[box_1, box_2] for box_1 in potential_twins for box_2 in 
+                peers[box_1] if nt_values[box_1] == nt_values[box_2]]
 
+    # Update common peer boxes by removing twin values
+    for box_1, box_2 in twin_sets:
+        peers_1 = set(peers[box_1])
+        peers_2 = set(peers[box_2])
+
+        common_peers = peers_1.intersection(peers_2)
+
+        for peer in common_peers:
+            for digit in nt_values[box_1]:
+                nt_values[peer] = nt_values[peer].replace(digit, '')
+
+    return nt_values
 
 def eliminate(values):
     """Apply the eliminate strategy to a Sudoku puzzle
@@ -196,6 +215,10 @@ def search(values):
     and extending it to call the naked twins strategy.
     """
     # TODO: Copy your code from the classroom to complete this function
+
+    # Temporary:
+    _ = naked_twins(values)
+
     values = reduce_puzzle(values)
     
     if values == False:
